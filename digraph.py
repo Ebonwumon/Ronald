@@ -394,7 +394,46 @@ def least_cost_path(G, start, dest, cost):
 
     return path
 
+def edges_from_text(text_file):
+    """
+    Makes a digraph from a provided text file.
+    Put the file name in quotes when calling:
+    (Ex) edges_from_text("edmonton-roads-digraph.txt")
 
+    >>> G = edges_from_text("test.txt")
+    >>> G
+    {(276281417, 276281423), (276281417, 276281415)}
+    """
+    # Open the file
+    file = open(text_file)
+    
+    edges = set()
+    edges_name = {}
+    
+    # Get all edges from text file, add to set
+    for line in file:
+        # strip all trailing whitespace
+        line = line.rstrip()
+        fields = line.split(",")
+        type = fields[0]
+
+        if type == 'E':
+            # got an edge record
+            (start,stop,name) = fields[1:]
+
+            # vertices are ints
+            start=int(start)
+            stop=int(stop)
+            individ_edge = (start,stop)
+
+            # get rid of leading and trailing quote " chars around name
+            name = name.strip('"')
+
+            edges.add(individ_edge)
+            edges_name[individ_edge] = name
+            
+    return edges
+        
 
 if __name__ == "__main__":
     import doctest
