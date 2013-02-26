@@ -344,14 +344,19 @@ def compress(walk):
         i = lasttime[walk[i]]+1
 
     return rv
-    
 
+# Dijkstra's algorithm, least cost path from start to dest
 def least_cost_path(G, start, dest, cost):
     """
     >>> G = Digraph( [(1,2), (2,3)] )
     >>> s = least_cost_path(G, 1, 3, (lambda x: 1) )
     >>> s == [1, 2, 3]
     True
+
+    # No Path returns None
+    >>> G = Digraph( [(1,2), (2,3), (4,5)] )
+    >>> s = least_cost_path(G, 1, 4, (lambda x: 1) )
+    >>> s
 
     """
     todo = {start: 0}
@@ -363,6 +368,8 @@ def least_cost_path(G, start, dest, cost):
         (cur,c) = ( min(todo.items(), key = lambda i: i[1]) )
         todo.pop(cur)
         visited.add(cur)
+
+        # look for unvisited neighbours
         for x in G.adj_to(cur):
             if x in visited: continue
             
@@ -371,16 +378,23 @@ def least_cost_path(G, start, dest, cost):
                 parent[x] = cur
                 
             else: pass
-                
-    #extract path to dest
+
+    # if dest was never reached, do not return a path
+    if dest not in visited:
+        return None
+    
+    # if there is a path, extract to dest
     path = [dest]
     while start not in path:
         path.append(parent[cur])
         cur = parent[cur]
 
+    # path is backwards, flip it
     path.reverse()
 
     return path
+
+
 
 if __name__ == "__main__":
     import doctest
