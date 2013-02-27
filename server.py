@@ -17,7 +17,7 @@ print("Done")
 def cost_distance(e):
     """
     >>> E = digraph.edges_from_text("test.txt")
-    >>> G = digraph.Digraph(edges)
+    >>> G = digraph.Digraph(E)
     >>> C = cost_distance( (276281417,276281415) )
     >>> C
     0.0008483923856308028
