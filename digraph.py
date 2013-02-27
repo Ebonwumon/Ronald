@@ -3,6 +3,7 @@ Graph module for undirected graphs.
 """
 
 import random
+import math
 
 try:
     import display
@@ -64,8 +65,8 @@ class Digraph:
         4
         """
         # Adds the vertices (in case they don't already exist)
-        for v in e:
-            self.add_vertex(v)
+        self.add_vertex(e[0])
+        self.add_vertex(e[1])
 
         # Add the edge
         self._tosets[e[0]].add(e[1])
@@ -345,6 +346,7 @@ def compress(walk):
 
     return rv
 
+
 # Dijkstra's algorithm, least cost path from start to dest
 def least_cost_path(G, start, dest, cost):
     """
@@ -400,40 +402,63 @@ def edges_from_text(text_file):
     Put the file name in quotes when calling:
     (Ex) edges_from_text("edmonton-roads-digraph.txt")
 
-    >>> G = edges_from_text("test.txt")
-    >>> G
-    {(276281417, 276281423), (276281417, 276281415)}
+    Returns a set of tuples
+    Tuples hold edge information: (first vertex, second vertex, cost)
     """
     # Open the file
     file = open(text_file)
     
     edges = set()
-    edges_name = {}
     
-    # Get all edges from text file, add to set
+    # Store vertices in a hash table, use to find cost
+    vertices = {}
+
     for line in file:
         # strip all trailing whitespace
         line = line.rstrip()
         fields = line.split(",")
         type = fields[0]
+        
+        if type == 'V':
+            # got a vertex record
+            (id,lat,long) = fields[1:]
+            
+            # vertex id's should be ints
+            id=int(id)
+            
+            # lat and long are floats
+            lat=float(lat)
+            long=float(long)
+            
+            vertices[id] = (lat, long)
 
-        if type == 'E':
+        elif type == 'E':
             # got an edge record
             (start,stop,name) = fields[1:]
 
             # vertices are ints
             start=int(start)
             stop=int(stop)
-            individ_edge = (start,stop)
 
             # get rid of leading and trailing quote " chars around name
             name = name.strip('"')
 
+            # compute the cost, need to be floats
+            (v1_lat) = vertices[start][0]
+            (v1_long) = vertices[start][1]
+            (v2_lat) = vertices[stop][0]
+            (v2_long) = vertices[stop][1]
+
+            (lat) = math.pow( math.fabs(v1_lat - v2_lat), 2)
+            (long) = math.pow( math.fabs(v1_long - v2_long), 2)
+            (cost) = math.sqrt( lat+long )
+
+            individ_edge = (start, stop, cost)
             edges.add(individ_edge)
-            edges_name[individ_edge] = name
-            
-    return edges
         
+        
+    return edges
+
 
 if __name__ == "__main__":
     import doctest
