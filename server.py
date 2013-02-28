@@ -13,17 +13,6 @@ class Server:
 		self.edges = vertex_edge_tuple[1]
 		self.graph = digraph.Digraph(self.edges)
 
-	def _calculate_route(self, origin_lat, origin_lon, dest_lat, dest_lon):
-		"""
-		Given the original and destination lat/lons, calculate route determines
-		the best method of travel utilizing best_route finding algorithms in
-		TODO
-
-
-		"""
-		pass
-
-	
 	def _parse_input(self, in_str):
 		"""
 		Takes a space separated list of 4 inputs. Inputs must be integers
@@ -43,10 +32,12 @@ class Server:
 			...
 		Exception: You must pass in 4 inputs
 		
-		This is code to test later when exceptions are easier
-		S._parse_input("eggs ham cheese yum")
+		>>> S._parse_input("17.4 ham cheese yum")
+
+		NOT SURE HOW TO TEST THIS
 
 		"""
+
 		split_string = in_str.split(' ')
 
 		if len(split_string) != 4:
@@ -56,9 +47,9 @@ class Server:
 
 		for i, value in enumerate(split_string):
 			try:
-				int_cast = int(value)
+				int_cast = int(value) # This will raise an exception if non-ints are passed in
 			except ValueError:
-				raise TypeError('All inputs must be integers')
+				exit()
 			split_string[i] = int_cast
 				
 		input_dict = {'lat': {'orig': split_string[0], 'dest': split_string[2]}, 
@@ -68,6 +59,8 @@ class Server:
 	
 	def cost_distance(self, e):
 		"""
+		Given edge e, we will compute the cost using pythagorean theorum.
+
 		>>> S = Server("test.txt")
 		>>> C = S.cost_distance( (276281417,276281415) )
 		>>> C
@@ -87,6 +80,7 @@ class Server:
 	def get_route(self, in_str):
 		"""
 		Primary server function, what should be called on every input
+
 		>>> S = Server("edmonton-roads-digraph.txt")
 		>>> S.get_route("5365488 -11333914 5364727 -11335890")
 		8
@@ -136,9 +130,12 @@ def get_vertex_id(vertex_dict, lat, lon):
 if __name__ == "__main__":
 	import doctest
 	doctest.testmod()
-
-"""if __name__ == "__main__":
+"""
+if __name__ == "__main__":
 	S = Server(input('Which data file would you like to open \n'))
-	while True:
-		S.get_route(input('Enter the four co-ordinates \n'))"""
-		
+	user_in = input('Enter the four co-ordinates [quit to kill everything] \n')
+	while not user_in == "quit":
+		S.get_route(user_in)		
+		user_in = input('Enter the four co-ordinates [quit to kill everything] \n')
+
+	"""	
