@@ -396,14 +396,15 @@ def least_cost_path(G, start, dest, cost):
 
     return path
 
-def edges_from_text(text_file):
+def graph_from_text(text_file):
     """
     Makes a digraph from a provided text file.
     Put the file name in quotes when calling:
     (Ex) edges_from_text("edmonton-roads-digraph.txt")
 
-    Returns a set of tuples
-    Tuples hold edge information: (first vertex, second vertex, cost)
+    Returns a tuple, the first tuple being vertices the second tuple being edges
+    edge information: (first vertex, second vertex, cost)
+	vertex information (id, lat, long)
     """
     # Open the file
     file = open(text_file)
@@ -421,16 +422,16 @@ def edges_from_text(text_file):
         
         if type == 'V':
             # got a vertex record
-            (id,lat,long) = fields[1:]
+            (id,lat,lon) = fields[1:]
             
             # vertex id's should be ints
             id=int(id)
             
-            # lat and long are floats
-            lat=float(lat)
-            long=float(long)
+            # lat and lon are integers that we floor and multiply by 100k
+            lat=int(math.floor(float(lat) * 100000))
+            lon=int((float(lon) * 100000))
             
-            vertices[id] = (lat, long)
+            vertices[id] = (lat, lon)
 
         elif type == 'E':
             # got an edge record
@@ -444,20 +445,20 @@ def edges_from_text(text_file):
             name = name.strip('"')
 
             # compute the cost, need to be floats
-            (v1_lat) = vertices[start][0]
-            (v1_long) = vertices[start][1]
-            (v2_lat) = vertices[stop][0]
-            (v2_long) = vertices[stop][1]
+            vertex_1_lat = vertices[start][0]
+            vertex_1_lon = vertices[start][1]
+            vertex_2_lat = vertices[stop][0]
+            vertex_2_lon = vertices[stop][1]
 
-            (lat) = math.pow( math.fabs(v1_lat - v2_lat), 2)
-            (long) = math.pow( math.fabs(v1_long - v2_long), 2)
-            (cost) = math.sqrt( lat+long )
+            computed_lat = math.pow( math.fabs(vertex_1_lat - vertex_2_lat), 2)
+            computed_lon = math.pow( math.fabs(vertex_1_lon - vertex_2_lon), 2)
+            cost = math.sqrt( computed_lat + computed_lon )
 
             individ_edge = (start, stop, cost)
             edges.add(individ_edge)
         
         
-    return edges
+    return (vertices, edges)
 
 
 if __name__ == "__main__":
