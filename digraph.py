@@ -352,6 +352,8 @@ def least_cost_path(G, start, dest, cost):
     """
     >>> G = Digraph( [(1,2), (2,3)] )
     >>> s = least_cost_path(G, 1, 3, (lambda x: 1) )
+	>>> G.is_path(s)
+	True
     >>> s == [1, 2, 3]
     True
 
@@ -380,6 +382,7 @@ def least_cost_path(G, start, dest, cost):
                 parent[x] = cur
                 
             else: pass
+		
 
     # if dest was never reached, do not return a path
     if dest not in visited:

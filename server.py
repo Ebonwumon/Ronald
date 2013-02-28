@@ -75,7 +75,12 @@ class Server:
 		"""
 		for (start, stop, cost) in self.edges:
 			if start == e[0] and stop == e[1]:
-				return cost
+				path_cost = cost
+
+		if path_cost: 
+			return path_cost
+		else:
+			raise Exception('Edge not found in file/db')
 
 
 	def get_route(self, in_str):
@@ -83,15 +88,38 @@ class Server:
 		Primary server function, what should be called on every input
 		>>> S = Server("edmonton-roads-digraph.txt")
 		>>> S.get_route("5365488 -11333914 5364727 -11335890")
-		314088878
+		8
+		5365488 -11333914
+		5365238 -11334423
+		5365157 -11334634
+		5365035 -11335026
+		5364789 -11335776
+		5364774 -11335815
+		5364756 -11335849
+		5364727 -11335890
+
+		>>> S.get_route("5344628 -11345124 5344596 -11345087")
+		2
+		5344628 -11345124
+		5344596 -11345087
+
+		>>> S.get_route("5355129 -11342006 5347643 -11364655")
+
 
 		"""
 		input_dict = self._parse_input(in_str)
-		vertex_id = get_vertex_id(self.vertices, input_dict['lat']['orig'], input_dict['lon']['orig'])
-		return vertex_id
+		origin_vertex_id = get_vertex_id(self.vertices, input_dict['lat']['orig'], 
+				input_dict['lon']['orig'])
+		dest_vertex_id = get_vertex_id(self.vertices, input_dict['lat']['dest'],
+				input_dict['lon']['dest'])
 
-		#least_cost_path(input_dict['lat']['orig'], input_dict['lon']['orig'],
-		#		input_dict['lat']['dest'], input_dict['lon']['dest'])
+		path = digraph.least_cost_path(self.graph, origin_vertex_id, dest_vertex_id, self.cost_distance)
+		
+		# Now for I/O
+		
+		print(len(path))
+		for p in path:
+			print(str(self.vertices[p][0]) + " " + str(self.vertices[p][1]))
 
 def get_vertex_id(vertex_dict, lat, lon):
 	"""
@@ -104,3 +132,9 @@ def get_vertex_id(vertex_dict, lat, lon):
 if __name__ == "__main__":
 	import doctest
 	doctest.testmod()
+
+"""if __name__ == "__main__":
+	S = Server(input('Which data file would you like to open \n'))
+	while True:
+		S.get_route(input('Enter the four co-ordinates \n'))"""
+		
