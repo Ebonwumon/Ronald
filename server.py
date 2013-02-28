@@ -1,5 +1,6 @@
 import digraph
 from types import *
+import math
 class Server:
 	"""
 	The server class. Works by instantiating a server object which has only
@@ -73,15 +74,15 @@ class Server:
 		85.05292469985967
 		>>> S = Server("edmonton-roads-digraph.txt")
 		"""
-		for (start, stop, cost) in self.edges:
-			if start == e[0] and stop == e[1]:
-				path_cost = cost
+		vertex_1_lat = self.vertices[e[0]][0]
+		vertex_1_lon = self.vertices[e[0]][1]
+		vertex_2_lat = self.vertices[e[1]][0]
+		vertex_2_lon = self.vertices[e[1]][1]
 
-		if path_cost: 
-			return path_cost
-		else:
-			raise Exception('Edge not found in file/db')
-
+		computed_lat = math.pow( math.fabs(vertex_1_lat - vertex_2_lat), 2)
+		computed_lon = math.pow( math.fabs(vertex_1_lon - vertex_2_lon), 2)
+		cost = math.sqrt( computed_lat + computed_lon )
+		return cost
 
 	def get_route(self, in_str):
 		"""
@@ -103,8 +104,11 @@ class Server:
 		5344628 -11345124
 		5344596 -11345087
 
-		>>> S.get_route("5355129 -11342006 5347643 -11364655")
+		HUGE ROUTE
+		S.get_route("5357300 -11361627 5347078 -11341668")
 
+		THIS ROUTE IS HUGE SO IT'S NOT RUNNING
+		S.get_route("5351621 -11337271 5344647 -11357049")
 
 		"""
 		input_dict = self._parse_input(in_str)
