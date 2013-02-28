@@ -352,8 +352,8 @@ def least_cost_path(G, start, dest, cost):
     """
     >>> G = Digraph( [(1,2), (2,3)] )
     >>> s = least_cost_path(G, 1, 3, (lambda x: 1) )
-	>>> G.is_path(s)
-	True
+    >>> G.is_path(s)
+    True
     >>> s == [1, 2, 3]
     True
 
@@ -361,8 +361,18 @@ def least_cost_path(G, start, dest, cost):
     >>> G = Digraph( [(1,2), (2,3), (4,5)] )
     >>> s = least_cost_path(G, 1, 4, (lambda x: 1) )
     >>> s
-	>>> None
+    >>> None
 
+    # 2 elements
+    >>> G = Digraph( [(1,2), (2,1)] )
+    >>> s = least_cost_path(G, 1, 2, (lambda x: 1) )
+    >>> s == [1,2]
+    True
+    
+    # Path to self
+    >>> s = least_cost_path(G, 1, 1, (lambda x:1) )
+    >>> s == [1]
+    True
     """
     todo = {start: 0}
     visited = set()
@@ -370,17 +380,17 @@ def least_cost_path(G, start, dest, cost):
 
     while todo and dest not in visited:
         # get smallest from todo
-        (cur,c) = ( min(todo.items(), key = lambda i: i[1]) )
-        todo.pop(cur)
-        visited.add(cur)
+        (vertex_id,total_distance) = ( min(todo.items(), key = lambda i: i[1]) )
+        todo.pop(vertex_id)
+        visited.add(vertex_id)
 
         # look for unvisited neighbours
-        for x in G.adj_to(cur):
-            if x in visited: continue
+        for neighbours in G.adj_to(vertex_id):
+            if neighbours in visited: continue
             
-            elif (x not in todo) or (c + cost((cur,x)) < todo[x]):
-                todo[x] = (c + cost((cur,x)) )
-                parent[x] = cur
+            elif (neighbours not in todo) or (total_distance + cost((vertex_id,neighbours)) < todo[neighbours]):
+                todo[neighbours] = (total_distance + cost((vertex_id,neighbours)) )
+                parent[neighbours] = vertex_id
                 
             else: pass
 		
@@ -392,8 +402,8 @@ def least_cost_path(G, start, dest, cost):
     # if there is a path, extract to dest
     path = [dest]
     while start not in path:
-        path.append(parent[cur])
-        cur = parent[cur]
+        path.append(parent[vertex_id])
+        vertex_id = parent[vertex_id]
 
     # path is backwards, flip it
     path.reverse()
