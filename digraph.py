@@ -375,8 +375,8 @@ def least_cost_path(G, start, dest, cost):
         for x in G.adj_to(cur):
             if x in visited: continue
             
-            elif (x not in todo) or (c+cost((cur,x))<todo[x]):
-                todo[x] = (c + cost( (cur,x) ))
+            elif (x not in todo) or (c + cost((cur,x)) < todo[x]):
+                todo[x] = (c + cost((cur,x)) )
                 parent[x] = cur
                 
             else: pass
