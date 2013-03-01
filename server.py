@@ -32,9 +32,10 @@ class Server:
 			...
 		Exception: You must pass in 4 inputs
 		
-		>>> S._parse_input("17.4 ham cheese yum")
-
-		NOT SURE HOW TO TEST THIS
+		S._parse_input("17.4 ham cheese yum")
+		This one gets all huffy and puffy about throwing its own exceptions
+		so it's remaining commented. Manually testing reveals it behaves as 
+		expected (TypeError)
 
 		"""
 
@@ -49,7 +50,7 @@ class Server:
 			try:
 				int_cast = int(value) # This will raise an exception if non-ints are passed in
 			except ValueError:
-				exit()
+				raise TypeError('All inputs must be integers')
 			split_string[i] = int_cast
 				
 		input_dict = {'lat': {'orig': split_string[0], 'dest': split_string[2]}, 
