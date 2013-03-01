@@ -2,6 +2,7 @@
 He does python pathfinding and doesn't afraid of anything
 
 Project is a collaboration is between Troy Pavlek and Victoria Bobey.
+External collaboration was done with Dylan Cassidy who provided a verbal punching bag for pent up frustration about python adding undue significance to whitespace.
 
 Some notes on running the project: It should all be generally handled by server.py. If server.py is running as main then it instantiates objects of itself and directs people around edmonton like nobody's business. If you want to run doctests on it, simply comment the main loop and use the doctest function at the bottom or you can run the testmod module externally on the server module.
 
