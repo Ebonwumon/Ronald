@@ -195,7 +195,7 @@ if __name__ == "__main__":
 							help='verbose',
 							action='store_true')
 		parser.add_argument('-g', '--graph',
-							help='path to graph (DEFAULT = " edmonton-roads-2.0.1.txt")',
+							help='path to graph (DEFAULT = "edmonton-roads-2.0.1.txt")',
 							dest='graphname',
 							default=' edmonton-roads-2.0.1.txt')
 
