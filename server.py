@@ -151,14 +151,11 @@ class Server:
 
 		"""
 		input_dict = self._parse_input(in_str)
-		print(input_dict)
 
 		origin_vertex_id = get_vertex_id(self.vertices, input_dict['lat']['orig'], 
 				input_dict['lon']['orig'])
-		print(origin_vertex_id)
 		dest_vertex_id = get_vertex_id(self.vertices, input_dict['lat']['dest'],
 				input_dict['lon']['dest'])
-		print(dest_vertex_id)
 
 		path = digraph.least_cost_path(self.graph, origin_vertex_id, dest_vertex_id, self.cost_distance)
 		
@@ -209,7 +206,7 @@ if __name__ == "__main__":
 							help='path to graph (DEFAULT = "edmonton-roads-2.0.1.txt")',
 							dest='graphname',
 							default='edmonton-roads-2.0.1.txt')
-
+)
 		return parser.parse_args()
 
 	S = Server(parse_args())
@@ -220,7 +217,11 @@ if __name__ == "__main__":
 		except RuntimeError:
 			continue
 
-		S.send(S.serial_out, len(path))
+		if path is None:
+			path_length = 0
+		else:
+			path_length = len(path)
+		S.send(S.serial_out, path_length)
 		for p in path:
 			S.send(S.serial_out, str(self.vertices[p][0]) + " " + str(self.vertices[p][1]))
 
