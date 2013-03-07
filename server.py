@@ -57,7 +57,7 @@ class Server:
 		split_string = in_str.split(' ')
 
 		if len(split_string) != 4:
-			raise Exception('You must pass in 4 inputs')
+			raise RuntimeError('You must pass in 4 inputs')
 
 		# We want to change all strings to integers. If not, exceptions must be raised
 
@@ -151,10 +151,14 @@ class Server:
 
 		"""
 		input_dict = self._parse_input(in_str)
+		print(input_dict)
+
 		origin_vertex_id = get_vertex_id(self.vertices, input_dict['lat']['orig'], 
 				input_dict['lon']['orig'])
+		print(origin_vertex_id)
 		dest_vertex_id = get_vertex_id(self.vertices, input_dict['lat']['dest'],
 				input_dict['lon']['dest'])
+		print(dest_vertex_id)
 
 		path = digraph.least_cost_path(self.graph, origin_vertex_id, dest_vertex_id, self.cost_distance)
 		
@@ -166,9 +170,16 @@ def get_vertex_id(vertex_dict, lat, lon):
 	"""
 
 	"""
+	distances = { }
 	for id, value in vertex_dict.items():
-		if lat in value and lon in value:
-			return id
+		computed_lat = math.pow( math.fabs(lat - value[0]), 2)
+		computed_lon = math.pow( math.fabs(lon - value[1]), 2)
+		cost = math.sqrt( computed_lat + computed_lon )
+		distances[cost] = id
+	
+	return distances[min(distances)]
+
+
 
 """if __name__ == "__main__":
 	import doctest
@@ -206,8 +217,9 @@ if __name__ == "__main__":
 		in_msg = S.receive(S.serial_in)
 		try:
 			path = S.get_route(in_msg)
-		except:
+		except RuntimeError:
 			continue
+
 		S.send(len(path))
 		for p in path:
 			S.send(str(self.vertices[p][0]) + " " + str(self.vertices[p][1]))
