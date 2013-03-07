@@ -178,9 +178,6 @@ def get_vertex_id(vertex_dict, lat, lon):
 
 
 
-"""if __name__ == "__main__":
-	import doctest
-	doctest.testmod()"""
 if __name__ == "__main__":
 	def parse_args():
 		"""
