@@ -8,7 +8,7 @@
 #include "serial_handling.h"
 
 // #define DEBUG_SCROLLING
- #define DEBUG_PATH
+// #define DEBUG_PATH
 // #define DEBUG_MEMORY
 
 // Pins and interrupt lines for the zoom in and out buttons.
@@ -103,7 +103,7 @@ const uint16_t screen_scroll_delta = 32;
 const uint16_t screen_left_margin = 10;
 const uint16_t screen_right_margin = 117;
 const uint16_t screen_top_margin = 10;
-const uint16_t screen_bottom_margin = 117;
+const uint16_t screen_bottom_margin = 140;
 
 // the path request, start and stop lat and lon
 uint8_t request_state = 0;  // 0 - wait for start, 1 - wait for stop point
