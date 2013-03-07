@@ -220,9 +220,9 @@ if __name__ == "__main__":
 		except RuntimeError:
 			continue
 
-		S.send(len(path))
+		S.send(S.serial_out, len(path))
 		for p in path:
-			S.send(str(self.vertices[p][0]) + " " + str(self.vertices[p][1]))
+			S.send(S.serial_out, str(self.vertices[p][0]) + " " + str(self.vertices[p][1]))
 
 
 	"""user_in = input('Enter the four co-ordinates [quit to kill everything] \n')
