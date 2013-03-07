@@ -23,7 +23,7 @@ class Server:
 			debug = True
 		else:
 			debug = False
-		vertex_edge_tuple = digraph.graph_from_text(graph_file)
+		vertex_edge_tuple = digraph.graph_from_text(args.graphname)
 		self.vertices = vertex_edge_tuple[0]
 		self.edges = vertex_edge_tuple[1]
 		self.graph = digraph.Digraph(self.edges)
