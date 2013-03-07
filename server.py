@@ -99,7 +99,7 @@ class Server:
 		"""
 		Sends a message back to the client device.
 		"""
-		full_message = ''.join((message, "\n"))
+		full_message = ''.join((str(message), "\n"))
 
 		(self.debug and
 			print("server:" + full_message + ":") )
@@ -206,7 +206,7 @@ if __name__ == "__main__":
 							help='path to graph (DEFAULT = "edmonton-roads-2.0.1.txt")',
 							dest='graphname',
 							default='edmonton-roads-2.0.1.txt')
-)
+
 		return parser.parse_args()
 
 	S = Server(parse_args())
