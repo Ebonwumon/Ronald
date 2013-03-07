@@ -119,7 +119,7 @@ class Server:
 
 		message = raw_message.decode('ascii')
 
-		return message.rstrip("\n\r")
+		return message.rstrip("\r\n")
 	
 	
 	def get_route(self, in_str):
