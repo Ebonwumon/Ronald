@@ -14,15 +14,15 @@ class Server:
 	def __init__(self, args):
 		if args.serialport:
 			print("Opening serial port: %s" % args.serialport)
-			serial_out = serial_in =  serial.Serial(args.serialport, 9600)
+			self.serial_out = self.serial_in =  serial.Serial(args.serialport, 9600)
 		else:
 			print("No serial port.  Supply one with the -s port option")
 			exit()
 
 		if args.verbose:
-			debug = True
+			self.debug = True
 		else:
-			debug = False
+			self.debug = False
 		vertex_edge_tuple = digraph.graph_from_text(args.graphname)
 		self.vertices = vertex_edge_tuple[0]
 		self.edges = vertex_edge_tuple[1]
@@ -95,27 +95,27 @@ class Server:
 		cost = math.sqrt( computed_lat + computed_lon )
 		return cost
 
-	def send(serial_port, message):
+	def send(self, serial_port, message):
 		"""
 		Sends a message back to the client device.
 		"""
 		full_message = ''.join((message, "\n"))
 
-		(debug and
+		(self.debug and
 			print("server:" + full_message + ":") )
 
 		reencoded = bytes(full_message, encoding='ascii')
 		serial_port.write(reencoded)
 
 
-	def receive(serial_port, timeout=None):
+	def receive(self, serial_port, timeout=None):
 		"""
 		Listen for a message. Attempt to timeout after a certain number of
 		milliseconds.
 		"""
 		raw_message = serial_port.readline()
 
-		debug and print("client:", raw_message, ":")
+		self.debug and print("client:", raw_message, ":")
 
 		message = raw_message.decode('ascii')
 
@@ -197,14 +197,17 @@ if __name__ == "__main__":
 		parser.add_argument('-g', '--graph',
 							help='path to graph (DEFAULT = "edmonton-roads-2.0.1.txt")',
 							dest='graphname',
-							default=' edmonton-roads-2.0.1.txt')
+							default='edmonton-roads-2.0.1.txt')
 
 		return parser.parse_args()
 
 	S = Server(parse_args())
 	while True:
-		in_msg = recieve(serial_in)
-		path = S.get_route(msg)
+		in_msg = S.receive(S.serial_in)
+		try:
+			path = S.get_route(in_msg)
+		except:
+			continue
 		S.send(len(path))
 		for p in path:
 			S.send(str(self.vertices[p][0]) + " " + str(self.vertices[p][1]))
