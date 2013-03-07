@@ -120,11 +120,13 @@ void draw_path(uint16_t length, coord_t path[]) {
     // Print off the recieved path
     Serial.println("Path Received: ");
     for (uint8_t i=0; i<length; i++){
+    #ifdef DEBUG_PATH 
         Serial.print(i);
         Serial.print(": ");
         Serial.print(path[i].lon);
         Serial.print(", ");
         Serial.println(path[i].lat);
+    #endif
     }
 
     int32_t first_in_path_x = longitude_to_x(current_map_num, path[0].lon);
@@ -137,17 +139,21 @@ void draw_path(uint16_t length, coord_t path[]) {
 
     //Run through coords, draw visible lines
     for (uint8_t i=0; i<length; i++){
+    #ifdef DEBUG_PATH
         Serial.print(i);
         Serial.print(" to ");
         Serial.print(i+1);
         Serial.print(": ");
+    #endif
+
         //If both point are visible, draw the line between them
         if( is_coord_visible(path[i]) && is_coord_visible(path[i+1]) ){
-            Serial.println("Visible");
+            //Serial.println("Visible");
             int32_t start_x = longitude_to_x(current_map_num, path[i].lon) - screen_map_x;
             int32_t start_y = latitude_to_y(current_map_num, path[i].lat) - screen_map_y;
-            int32_t stop_x = longitude_to_x(current_map_num, path[i].lon) - screen_map_x;
-            int32_t stop_y = latitude_to_y(current_map_num, path[i].lat) - screen_map_y;
+            int32_t stop_x = longitude_to_x(current_map_num, path[i+1].lon) - screen_map_x;
+            int32_t stop_y = latitude_to_y(current_map_num, path[i+1].lat) - screen_map_y;
+            //#ifdef DEBUG_PATH
             Serial.print("Start Converted to: ");
             Serial.print(start_x);
             Serial.print(", ");
@@ -156,11 +162,13 @@ void draw_path(uint16_t length, coord_t path[]) {
             Serial.print(stop_x);
             Serial.print(", ");
             Serial.println(stop_y);
-
+            //#endif
+            
+            //tft.fillScreen(ST7735_BLACK);
             tft.drawLine(start_x, start_y, stop_x, stop_y, ST7735_BLUE);
         }
         else {
-            Serial.println("Not Visible");
+            //Serial.println("Not Visible");
         }
     }
 }
