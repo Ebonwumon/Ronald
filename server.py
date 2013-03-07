@@ -7,7 +7,18 @@ class Server:
 	one user-accessable member method: get_route.
 	"""
 
-	def __init__(self, graph_file):
+	def __init__(self, args):
+		if args.serialport:
+			print("Opening serial port: %s" % args.serialport)
+			serial_out = serial_in =  serial.Serial(args.serialport, 9600)
+		else:
+			print("No serial port.  Supply one with the -s port option")
+			exit()
+
+		if args.verbose:
+			debug = True
+		else:
+			debug = False
 		vertex_edge_tuple = digraph.graph_from_text(graph_file)
 		self.vertices = vertex_edge_tuple[0]
 		self.edges = vertex_edge_tuple[1]
@@ -17,7 +28,7 @@ class Server:
 		"""
 		Takes a space separated list of 4 inputs. Inputs must be integers
 
-		>>> S = Server("test.txt")
+		>>> S = Server(parse_args())
 		>>> result = S._parse_input("5365488 -11333914 5364727 -11335890")
 		>>> result['lat']['orig']
 		5365488
@@ -57,12 +68,14 @@ class Server:
 				'lon': {'orig': split_string[1], 'dest': split_string[3]}}
 
 		return input_dict
+
+	
 	
 	def cost_distance(self, e):
 		"""
 		Given edge e, we will compute the cost using pythagorean theorum.
 
-		>>> S = Server("test.txt")
+		>>> S = Server(parse_args())
 		>>> C = S.cost_distance( (276281417,276281415) )
 		>>> C
 		85.05292469985967
@@ -78,11 +91,38 @@ class Server:
 		cost = math.sqrt( computed_lat + computed_lon )
 		return cost
 
+	def send(serial_port, message):
+		"""
+		Sends a message back to the client device.
+		"""
+		full_message = ''.join((message, "\n"))
+
+		(debug and
+			print("server:" + full_message + ":") )
+
+		reencoded = bytes(full_message, encoding='ascii')
+		serial_port.write(reencoded)
+
+
+	def receive(serial_port, timeout=None):
+		"""
+		Listen for a message. Attempt to timeout after a certain number of
+		milliseconds.
+		"""
+		raw_message = serial_port.readline()
+
+		debug and print("client:", raw_message, ":")
+
+		message = raw_message.decode('ascii')
+
+		return message.rstrip("\n\r")
+	
+	
 	def get_route(self, in_str):
 		"""
 		Primary server function, what should be called on every input
 
-		>>> S = Server("edmonton-roads-digraph.txt")
+		>>> S = Server(parse_args())
 		>>> S.get_route("5365488 -11333914 5364727 -11335890")
 		8
 		5365488 -11333914
@@ -114,12 +154,10 @@ class Server:
 
 		path = digraph.least_cost_path(self.graph, origin_vertex_id, dest_vertex_id, self.cost_distance)
 		
-		# Now for I/O
-		
-		print(len(path))
-		for p in path:
-			print(str(self.vertices[p][0]) + " " + str(self.vertices[p][1]))
 
+		return path
+		
+		
 def get_vertex_id(vertex_dict, lat, lon):
 	"""
 
@@ -128,15 +166,48 @@ def get_vertex_id(vertex_dict, lat, lon):
 		if lat in value and lon in value:
 			return id
 
-if __name__ == "__main__":
+"""if __name__ == "__main__":
 	import doctest
-	doctest.testmod()
-"""
+	doctest.testmod()"""
 if __name__ == "__main__":
-	S = Server(input('Which data file would you like to open \n'))
-	user_in = input('Enter the four co-ordinates [quit to kill everything] \n')
+	def parse_args():
+		"""
+		Parses arguments for this program.
+		Returns an object with the following members:
+			args.
+				 serialport -- str
+				 verbose    -- bool
+				 graphname  -- str
+		"""
+
+		parser = argparse.ArgumentParser(
+			description='Assignment 1: Map directions.',
+			epilog = 'If SERIALPORT is not specified, stdin/stdout are used.')
+		parser.add_argument('-s', '--serial',
+							help='path to serial port',
+							dest='serialport',
+							default=None)
+		parser.add_argument('-v', dest='verbose',
+							help='verbose',
+							action='store_true')
+		parser.add_argument('-g', '--graph',
+							help='path to graph (DEFAULT = " edmonton-roads-2.0.1.txt")',
+							dest='graphname',
+							default=' edmonton-roads-2.0.1.txt')
+
+		return parser.parse_args()
+
+	S = Server(parse_args())
+	while True:
+		in_msg = recieve(serial_in)
+		path = S.get_route(msg)
+		S.send(len(path))
+		for p in path:
+			S.send(str(self.vertices[p][0]) + " " + str(self.vertices[p][1]))
+
+
+	"""user_in = input('Enter the four co-ordinates [quit to kill everything] \n')
 	while not user_in == "quit":
 		S.get_route(user_in)		
-		user_in = input('Enter the four co-ordinates [quit to kill everything] \n')
+		user_in = input('Enter the four co-ordinates [quit to kill everything] \n')"""
 
-	"""	
